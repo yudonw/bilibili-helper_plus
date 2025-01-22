@@ -8,7 +8,7 @@
     let title = document.title;
 
     // 繁体字的正则表达式
-    let regexTraditional = /[\u4E00\u4E09\u4E8C\u4E10\u4E3F\u4E38\u4E43\u4E58\u4E60\u4E65\u4E72\u4E7E\u4E8B\u4E9A\u5A5A\u5BC6\u5C0F\u5D4A\u5E03\u5E7A\u5F9C\u9B31\u9E1A]/;
+    let regexTraditional = /[\u3400-\u4DBF\uF900-\uFAFF\u2E80-\u2EFF\u31C0-\u31EF\u2F00-\u2FDF\u2FF0-\u2FFF\u3000-\u303F\u31A0-\u31BF\u4DC0-\u4DFF\uA490-\uA4CF\uA000-\uA48F\uA4D0-\uA4FF\uA960-\uA97F\uAC00-\uD7AF\uD7B0-\uD7FF\uFF00-\uFFEF]/;
 
     // 检查是否是哔哩哔哩的网站
     if (url.includes("bilibili.com/bangumi/play")) {
