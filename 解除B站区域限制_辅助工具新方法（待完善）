@@ -1,0 +1,71 @@
+// ==UserScript==
+// @name         解除B站区域限制_辅助工具新方法
+// @namespace    http://tampermonkey.net/
+// @version      1.3
+// @description  仅在番剧受限时修改 URL 以尝试解除区域限制
+// @author       三年二班
+// @match        *://www.bilibili.com/*
+// @grant        none
+// @license      MIT
+// ==/UserScript==
+(function() {
+    // 开启一个自执行函数，防止污染全局作用域
+    let xianzhi = 0//设置一个变量记录当前番剧状态，0为无限制，1为受限
+    const originalSend = XMLHttpRequest.prototype.send;
+    // 重写 XMLHttpRequest 的 send 方法
+    XMLHttpRequest.prototype.send = function() {
+      const xhr = this;
+      const url = xhr.responseURL;
+      // 存储原始的 onload 回调函数
+      const onload = xhr.onload;
+      xhr.onload = function() {
+        const json = JSON.parse(xhr.responseText);
+        let xianzhi = 0; // 新增的 xianzhi 变量，默认为 0
+        if (json.result) {
+          // 判断是否有限制
+          if (json.result.area_limit !== 0 || json.result.play === 0) {
+            xianzhi = 1;
+            areaLimit(true); // 调用 areaLimit 标记区域限制
+          } else {
+            areaLimit(false);
+            xianzhi = 0;// 没有限制
+          }
+        }
+        // 打印当前番剧的限制状态
+        console.log("当前番剧限制状态：", xianzhi);
+        // 执行原始的 onload 操作
+        if (onload) {
+          onload.call(xhr);
+        }
+      };
+      // 调用原始的 send 方法
+      originalSend.apply(this, arguments);
+    };
+    // 区域限制处理函数
+    function areaLimit(isLimited) {
+      if (isLimited) {
+        console.log("区域限制已开启");
+        // 在这里添加绕过区域限制的代码
+      } else {
+        console.log("没有区域限制");
+      }
+    }
+  //以下部分与原程序基本保持一致
+    let url = window.location.href;
+    let title = document.title;
+    if (url.includes("bilibili.com/bangumi/play")) {
+        if ( xianzhi = 1) {
+            if (!url.includes("?") && !url.includes("spm_id_from")) {
+                let newUrl = url + "?spm_id_from=333.1387.0.0";
+                window.location.href = newUrl;
+                return;
+            }
+            if (url.includes("from")) {
+                if (url.includes("?")) {
+                    let newUrl = url.replace("?", "");
+                    window.location.href = newUrl;
+                }
+            }
+        }
+    }
+  })();
